@@ -18,7 +18,6 @@ import scipy.stats as st
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('working_dir', type=str)
-    parser.add_argument('embeddings_file', type=str)
     args = parser.parse_args()
 
     # Build dataset for Autoencoder Training
@@ -43,9 +42,9 @@ if __name__ == "__main__":
 
     # Now train autoencoder
     with open(os.path.join(args.working_dir, "case_patient_indexes.pkl"), "rb") as file3:
-        data_id = pickle.load(file3, encoding="bytes")
+        data_id = pickle.load(file3)
     with open(os.path.join(args.working_dir, "case_patient_emb.pkl"), "rb") as file2:
-        case_data = pickle.load(file2, encoding="bytes")
+        case_data = pickle.load(file2)
 
     # data preprocess
     # train data
