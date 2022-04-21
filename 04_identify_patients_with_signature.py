@@ -7,7 +7,7 @@ import os
 import pickle
 import numpy as np
 import keras
-from keras.layers import Input, Dense
+from keras import layers
 from keras.models import Model
 from sklearn.model_selection import train_test_split
 from keras.optimizers import RMSprop
@@ -65,30 +65,13 @@ if __name__ == "__main__":
     batch_size = 128
     epochs = 10
 
-    input_seqs = Input(shape=(200,))
+    input_seqs = keras.Input(shape=(200,))
 
     latent_dim = 32
 
-
-    class Autoencoder(Model):
-        def __init__(self, latent_dim):
-            super(Autoencoder, self).__init__()
-            self.latent_dim = latent_dim
-            self.encoder = keras.Sequential([
-                Dense(latent_dim, activation='relu')
-            ])
-            self.decoder = keras.Sequential([
-                Dense(200, activation='sigmoid')  # Confused....
-            ])
-
-        def call(self, x):
-            encoded = self.encoder(x)
-            decoded = self.decoder(encoded)
-            return decoded
-
-
-    autoencoder = Autoencoder(latent_dim)
-
+    encode = layers.Dense(latent_dim, activation='relu')(input_seqs)
+    decode = layers.Dense(200, activation='sigmoid')(encode)
+    autoencoder = keras.Model(input_seqs, decode)
     autoencoder.compile(loss='mean_squared_error', optimizer=RMSprop())
 
     autoencoder_train = autoencoder.fit(train_X, train_Y,
@@ -106,18 +89,12 @@ if __name__ == "__main__":
     val_loss = autoencoder_train.history['val_loss']
 
     epochs = range(epochs)
-    plt.figure()
-    plt.plot(epochs, loss, 'bo', label='Training loss')
-    plt.plot(epochs, val_loss, 'b', label='Validation loss')
-    plt.title('Training and validation loss')
-    plt.legend()
-    plt.show()
 
     case_data = case_data / data_max
     case_pred = autoencoder.predict(case_data)
     i = 0
     error_list = []
-    for i in range(1236):
+    for i in range(len(case_data)): ## TODO check into what this was
         error_list.append(mean_squared_error(case_data[i], case_pred[i]))
 
     print(error_list)
