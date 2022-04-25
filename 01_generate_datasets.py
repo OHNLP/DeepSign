@@ -76,10 +76,6 @@ if __name__ == "__main__":
     icd9_data["DIAGNOSIS_CODE"] = icd9_data["DIAGNOSIS_CODE"].map(map_dict)
 
     mapped_data = pd.concat([icd9_data, icd10_data], ignore_index=True)
-    # TODO purge case diagnoses
-    # if args.TOI is True:
-    #     mapped_data = mapped_data[mapped_data["DIAGNOSIS_CODE"] != 3222]
-    #     print("TOI is True")
     mapped_data = mapped_data.dropna()
 
     # - Checkpoint: Output mapped raw data
